@@ -147,10 +147,6 @@ class webshell(Cmd):
 	def preloop(self):
 		pass
 		
-
-	def emptyline(self):
-		print 'dammit'
-
 try:
 	ws = webshell()
 	ws.init()
