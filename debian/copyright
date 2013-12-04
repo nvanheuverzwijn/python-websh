@@ -1,0 +1,9 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: python-websh
+
+Files: *
+Copyright: Copyright (c) 2013, Simon Vigneux
+License: GPLv3
+
+License: GPLv3
+ see authors for more info.

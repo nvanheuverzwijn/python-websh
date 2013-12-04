@@ -1,0 +1,5 @@
+# ignore debian build specific files
+debian/files
+*.debhelper.log
+*.substvars
+debian/websh/*
