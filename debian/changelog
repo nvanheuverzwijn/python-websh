@@ -1,3 +1,11 @@
+websh (0.0.2) experimental; urgency=low
+
+  * rename websh as it broke the build.
+  * added dependency on python-pyparsing
+  * websh had debug enabled
+
+ -- Simon Vigneux <svigneux@kronostechnologies.com>  Wed, 04 Dec 2013 19:43:09 -0500
+
 websh (0.0.1) experimental; urgency=low
 
   * Initial release.
