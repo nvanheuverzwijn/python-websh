@@ -8,6 +8,6 @@ Vcs-Git: git://github.com/svigneux/python-websh.git
 
 Package: websh
 Architecture: all
-Depends: ${misc:Depends}, python, python-cmd2, python-httplib2
+Depends: ${misc:Depends}, python, python-cmd2, python-httplib2, python-pyparsing
 Description: webshell client and server
  Packaging of a webshell client and server
