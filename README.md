@@ -23,3 +23,6 @@ Example:
 	  -h, --help         show this help message and exit
 	  -e ENC, --enc ENC  Encoding/encryption to use. (Default: plain)
 
+
+Possible encoding 
+  base64 or plain
