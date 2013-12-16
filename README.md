@@ -7,3 +7,20 @@ When you find a vulnerable website where you can execute shell commands, the pyt
 
 Example:
 ./websh http://www.example.com/shell.php?c=
+
+
+
+
+usage: websh [-h] [-e ENC] url
+
+Let the web be command-line.
+
+positional arguments:
+  url                Enter the full target URL where the shell/cmd can be
+                     executed.Example: www.example.com/shell.php
+
+optional arguments:
+  -h, --help         show this help message and exit
+  -e ENC, --enc ENC  Encoding/encryption to use. (Default: plain)
+exception
+
