@@ -25,4 +25,4 @@ Example:
 
 
 Possible encoding 
-  base64 or plain
+	ase64 or plain
