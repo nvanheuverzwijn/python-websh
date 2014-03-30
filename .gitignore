@@ -3,3 +3,5 @@ debian/files
 *.debhelper.log
 *.substvars
 debian/websh/*
+.cache
+.project

