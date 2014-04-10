@@ -24,5 +24,7 @@ Example:
 	  -e ENC, --enc ENC  Encoding/encryption to use. (Default: plain)
 
 
-Possible encoding 
-	ase64 or plain
+Possible encoding base64 or plain
+
+# PREREQ
+aptitude install python-httplib2
